@@ -8,7 +8,7 @@ cd backup_folder
 sudo mysqldump --user=<username> --password=<password> --host=localhost <database_name> >"${time_stamp}"backup.sql
 
 # upload to s3 bucket
-aws s3 sync backup_folder s3_bucket/${time_stamp}
+aws s3 cp backup_folder s3_bucket/${time_stamp}
 
 # upload to git
 cd backup_folder
