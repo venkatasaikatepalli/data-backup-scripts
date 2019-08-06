@@ -9,7 +9,7 @@ cd $app_directory
 python3 $app_directory/manage.py dumpdata > $backup_directory/$time_stamp-backup.json
 
 #upload to s3
-/home/ubuntu/.local/bin/aws s3 cp $backup_directory/$time_stamp-backup.json s3://inmailuat-backup-data
+/home/ubuntu/.local/bin/aws s3 cp $backup_directory/$time_stamp-backup.json s3://<s3_bucket>
 
 # upload to git
 cd backup_folder
