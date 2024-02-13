@@ -9,8 +9,11 @@ const config = {
   }
 };
 
+
 const sql = require('mssql');
 const ExcelJS = require('exceljs');
+const fs = require('fs');
+const path = require('path');
 
 (async () => {
   try {
@@ -34,13 +37,20 @@ const ExcelJS = require('exceljs');
     masterWorksheet.addRow(['Table Name', 'Sheet']);
 
     // Populate the master worksheet with table names and corresponding sheet names
-    for (const [tableName, sheetName] of tableMap.entries()) {
-      masterWorksheet.addRow([tableName, { formula: `HYPERLINK("#'${sheetName}'!A1", "${sheetName}")` }]);
+    for (const [sheetName, tableName] of tableMap.entries()) {
+      masterWorksheet.addRow([tableName, sheetName]);
     }
 
+    // Generate the file name
+    const host = config.server; // Replace with actual host name
+    const database = config.database; // Replace with actual database name
+    const timestamp = new Date().toISOString().replace(/:/g, '-').replace(/\..+/, '');
+    const fileName = `${host}_${database}_${timestamp}.xlsx`;
+
     // Write the workbook to a file
-    await workbook.xlsx.writeFile('tables.xlsx');
-    console.log('Tables exported successfully.');
+    const filePath = path.join(__dirname, fileName);
+    await workbook.xlsx.writeFile(filePath);
+    console.log(`Tables exported successfully to ${fileName}.`);
     console.log('Table mapping:', Array.from(tableMap));
   } catch (err) {
     console.error('Error exporting tables:', err.message);
@@ -110,4 +120,3 @@ async function exportTableToExcel(workbook, sheetName, tableName, columns) {
     column.width = maxLength < 30 ? 30 : maxLength;
   });
 }
-
